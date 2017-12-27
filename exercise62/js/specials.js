@@ -1,27 +1,26 @@
-function LoadJsonForOption(domElements){
+function OptionDataLoader(domElements) {
   this.form = domElements.form;
   this.select = domElements.select;
   this.submitButton = domElements.submitButton;
 }
-LoadJsonForOption.prototype.init = function(){
+OptionDataLoader.prototype.init = function() {
   this.createDiv();
   this.removeSubmitButton();
   this.bindChangeToSelect();
 }
 
-LoadJsonForOption.prototype.createDiv = function(){
-  this.targetDiv = $("<div></div>");
-  this.targetDiv.css("text-align", "center");
+OptionDataLoader.prototype.createDiv = function() {
+  this.targetDiv = $("<div></div>").css("text-align", "center");
   this.form.after(this.targetDiv);
 }
 
-LoadJsonForOption.prototype.removeSubmitButton = function(){
+OptionDataLoader.prototype.removeSubmitButton = function() {
   this.submitButton.remove();
 }
 
-LoadJsonForOption.prototype.bindChangeToSelect = function(){
+OptionDataLoader.prototype.bindChangeToSelect = function() {
   var _this = this;
-  this.select.on("change", function(){
+  this.select.on("change", function() {
     _this.selectedOption = $(this).val();
     $.ajax({
       url: "data/specials.json",
@@ -33,17 +32,17 @@ LoadJsonForOption.prototype.bindChangeToSelect = function(){
   });
 }
 
-LoadJsonForOption.prototype.onAjaxSuccess = function(data){
+OptionDataLoader.prototype.onAjaxSuccess = function(data) {
   var weekdayData = data[this.selectedOption];
-  this.targetDiv.text(weekdayData.text);
-  var heading = $("<h4></h4>");
-  heading.text(weekdayData.title);
-  this.targetDiv.prepend(heading);
-  this.targetDiv.css("color", weekdayData.color);
-
+  var heading = $("<h4></h4>").text(weekdayData.title);
+  this.targetDiv.text(weekdayData.text).prepend(heading).css({
+    "color": weekdayData.color,
+    "background-image": 'url(' + weekdayData.image + ')',
+    "height": "200px"
+  });
 };
 
-$(document).ready(function(){
+$(document).ready(function() {
   var form = $("#specials").find("form");
   var domElements = {
     form: form,
@@ -51,7 +50,6 @@ $(document).ready(function(){
     submitButton: form.find(".buttons")
   }
 
-  var loadJsonForOption = new LoadJsonForOption(domElements);
-  loadJsonForOption.init();
+  var optionDataLoader = new OptionDataLoader(domElements);
+  optionDataLoader.init();
 });
-
